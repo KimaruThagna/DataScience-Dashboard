@@ -26,7 +26,7 @@ options = st.multiselect(
 st.write('You selected:', options)
 
 #filter dataframe
-counties = st.multiselect('Show land under irrigation for County?', df['County'].unique())
+counties = st.sidebar.multiselect('Show land under irrigation for County?', df['County'].unique())
 # Filter dataframe
 filtered_df = df[(df['County'].isin(counties)) ]
 # write dataframe to screen
