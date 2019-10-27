@@ -10,6 +10,11 @@ st.write(x, 'factorial is', math.factorial(x))
 value = st.text_input('Enter Values of X')
 st.write('The Entered value is', value)
 #checkbox
+
+'''
+### StreamLit Dashboard Sample App
+Interactive dashboard on Land under irrigation in Kenyan Counties
+'''
 df = pd.read_csv("datasets/land_under_Irrigation.csv")
 if st.checkbox('Show dataframe'):
     st.write(df)
@@ -35,4 +40,7 @@ st.write(filtered_df)
 # create figure
 fig = plt.scatter(filtered_df, y='Percent')
 # Plot!
+'''
+### Visualization of selected Counties
+'''
 st.plotly_chart(fig)
