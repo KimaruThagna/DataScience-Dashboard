@@ -67,3 +67,17 @@ if st.checkbox('Fit model'):
          epochs=epochs,
          validation_data=(x_test[0:1000]/255.0, to_categorical(y_test[0:1000]))
          )
+
+    # Plot training & validation accuracy values
+    plt.plot(history.history['accuracy'])
+    plt.plot(history.history['val_accuracy'])
+    plt.title('Model accuracy')
+    plt.ylabel('Accuracy')
+    plt.xlabel('Epoch')
+    plt.legend(['Train', 'Test'], loc='upper left')
+    st.pyplot()
+predictions = model.predict(x_test / 255.0)
+scores = model.evaluate(x_test / 255.0, to_categorical(y_test))
+
+st.write(f'loss: {round(scores[0], 2)}')
+st.write(f'accuracy: {round(100 * scores[1], 2)}%')
