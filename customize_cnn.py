@@ -1,5 +1,6 @@
-import tensorflow as tf
-from tensorflow import keras
+import keras
+from keras.models import Sequential
+from keras.layers import Conv2D, MaxPool2D, Dropout, Flatten, Dense
 import matplotlib.pyplot as plt
 import numpy as np
 import pydot_ng as pydot
@@ -33,3 +34,26 @@ batch_size = st.selectbox('Select batch size', [32, 64, 128, 256])
 epochs=st.selectbox('Select number of epochs', [10, 25, 50])
 loss_function = st.selectbox('Loss function', ['mean_squared_error', 'mean_absolute_error', 'categorical_crossentropy'])
 optimizer = st.selectbox('Optimizer', ['SGD', 'RMSprop', 'Adam'])
+
+# generating CNN
+st.subheader('Building your Custom CNN')
+st.text('Default Kernel size is the suggested 3X3')
+model = Sequential()
+activation_1 = st.selectbox('Activation function for first layer: ', ['relu', 'tanh', 'softmax'])
+
+model.add(Conv2D(32,kernel_size=(3,3),activation=activation_1,input_shape=(32,32,3)))
+model.add(MaxPool2D(pool_size=(2,2)))
+
+if st.checkbox('Add hidden Conv2D layer?'):
+    activation_h = st.selectbox('Activation function for hidden layer: ', ['relu', 'tanh', 'softmax'])
+    model.add(Conv2D(64, kernel_size=(3, 3), activation=activation_h, input_shape=(32, 32, 3)))
+    model.add(MaxPool2D(pool_size=(2, 2)))
+
+if st.checkbox('Add a drop layer?'):
+    drop1=st.selectbox('Select dropout Rate', [0.1, 0.25, 0.5])
+    model.add(Dropout(drop1))
+model.add(Flatten())
+activation_2 = st.selectbox('Activation function for Dense layer: ', ['relu', 'tanh', 'softmax'])
+model.add(Dense(1024,activation=activation_2))
+activation_3 = st.selectbox('Activation function for Output layer: ', ['relu', 'tanh', 'softmax'])
+model.add(Dense(10,activation=activation_3))
