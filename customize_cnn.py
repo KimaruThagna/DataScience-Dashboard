@@ -1,6 +1,6 @@
-import keras
 from keras.models import Sequential
 from keras.layers import Conv2D, MaxPool2D, Dropout, Flatten, Dense
+from keras.utils import to_categorical
 import matplotlib.pyplot as plt
 import numpy as np
 import pydot_ng as pydot
@@ -57,3 +57,13 @@ activation_2 = st.selectbox('Activation function for Dense layer: ', ['relu', 't
 model.add(Dense(1024,activation=activation_2))
 activation_3 = st.selectbox('Activation function for Output layer: ', ['relu', 'tanh', 'softmax'])
 model.add(Dense(10,activation=activation_3))
+
+# model compiling
+model.compile(loss=loss_function, optimizer=optimizer, metrics=['accuracy'])
+if st.checkbox('Fit model'):
+    history = model.fit(x_train[0:1000]/255.0, to_categorical(y_train[0:1000]),
+         batch_size=batch_size,
+         shuffle=True,
+         epochs=epochs,
+         validation_data=(x_test[0:1000]/255.0, to_categorical(y_test[0:1000]))
+         )
