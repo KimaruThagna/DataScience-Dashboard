@@ -81,3 +81,43 @@ scores = model.evaluate(x_test / 255.0, to_categorical(y_test))
 
 st.write(f'loss: {round(scores[0], 2)}')
 st.write(f'accuracy: {round(100 * scores[1], 2)}%')
+
+# visualize predictions
+st.subheader('Visualize Predictions')
+
+def plot_pred(i, predictions_array, true_label, img):
+    predictions_array, true_label, img = predictions_array[i], true_label[i:i + 1], img[i]
+    plt.grid(False)
+    plt.title(classes[true_label[0][0]])
+    plt.xticks([])
+    plt.yticks([])
+
+    plt.imshow(img)
+
+# plot the 10 classes and their probabilities
+def plot_bar(i, predictions_array, true_label):
+    predictions_array, true_label = predictions_array[i], true_label[i]
+    plt.grid(False)
+    plt.yticks([])
+    plt.xticks(np.arange(10), classes, rotation=40)
+
+    plot = plt.bar(range(10), predictions_array, color='grey')
+    plt.ylim([0, 1])
+    predicted_label = np.argmax(predictions_array)
+
+    if predicted_label == true_label:
+        color = 'green'
+    else:
+        color = 'red'
+
+    plot[predicted_label].set_color(color)
+
+
+if st.checkbox('Show random prediction results'):
+    num2 = np.random.randint(0, len(y_test))
+    plt.figure(figsize=(15, 6))
+    plt.subplot(1, 2, 1)
+    plot_pred(num2, predictions, y_test, x_test)
+    plt.subplot(1, 2, 2)
+    plot_bar(num2, predictions, y_test)
+    st.pyplot()
