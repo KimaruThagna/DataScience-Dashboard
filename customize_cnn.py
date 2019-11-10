@@ -24,5 +24,12 @@ classes = ['Sneaker', 'Coat', 'Dress', 'Shirt', 'Sandal']
 st.subheader('Inspect dataset')
 if st.checkbox('Display random image from the train set'):
     num = np.random.randint(0, x_train.shape[0])
-    image = x_train[num]
-    st.image(image, caption=classes[y_train[num][0]], use_column_width=True)
+    img = x_train[num]
+    st.image(img, caption=classes[y_train[num][0]], use_column_width=True)
+
+# interactive hyperparameter settings
+st.subheader('Set some hyperparameters for model tuning')
+batch_size = st.selectbox('Select batch size', [32, 64, 128, 256])
+epochs=st.selectbox('Select number of epochs', [10, 25, 50])
+loss_function = st.selectbox('Loss function', ['mean_squared_error', 'mean_absolute_error', 'categorical_crossentropy'])
+optimizer = st.selectbox('Optimizer', ['SGD', 'RMSprop', 'Adam'])
