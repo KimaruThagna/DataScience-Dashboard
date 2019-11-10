@@ -4,7 +4,6 @@ import pandas as pd
 from matplotlib import pyplot as plt
 
 
-
 #df = st.cache(pd.read_csv)("football_data.csv")
 # @st.cache
 # def complex_func(a,b):
