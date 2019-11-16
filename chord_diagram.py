@@ -55,3 +55,28 @@ def get_ideogram_ends(ideogram_len, gap):
 
 ideo_ends  =  get_ideogram_ends(ideogram_length, gap)
 print(f'The coordinates of the ideogram ends {ideo_ends}')
+
+# convert the output of get_ideogram_ends into complex numbers in polar form for plotting purposes by plotly
+def make_ideogram_arc(R, phi, a=50):
+    # R is the circle radius
+    # phi is the list of ends angle coordinates of an arc
+    # a is a parameter that controls the number of points to be evaluated on an arc
+    if not test_2PI(phi[0]) or not test_2PI(phi[1]):
+        phi=[moduloAB(t, 0, 2*PI) for t in phi]
+    length=(phi[1]-phi[0])% 2*PI
+    nr=5 if length<=PI/4 else int(a*length/PI)
+
+    if phi[0] < phi[1]:
+        theta=np.linspace(phi[0], phi[1], nr)
+    else:
+        phi=[moduloAB(t, -PI, PI) for t in phi]
+        theta=np.linspace(phi[0], phi[1], nr)
+    return R*np.exp(1j*theta)
+# set ideogram colors
+
+labels=['A', 'B', 'C', 'D', 'E']
+ideo_colors=['rgba(244, 109, 67, 0.75)',
+             'rgba(100, 174, 97, 1)',
+             'rgba(254, 5, 139, 0.55)',
+             'rgba(254, 239, 139, 0.75)',
+             'rgba(12, 7, 106, 0.75)']#brewer colors with alpha set on 0.75
