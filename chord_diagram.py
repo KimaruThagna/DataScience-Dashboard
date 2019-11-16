@@ -72,6 +72,7 @@ def make_ideogram_arc(R, phi, a=50):
         phi=[moduloAB(t, -PI, PI) for t in phi]
         theta=np.linspace(phi[0], phi[1], nr)
     return R*np.exp(1j*theta)
+
 # set ideogram colors
 
 labels=['A', 'B', 'C', 'D', 'E']
@@ -80,3 +81,30 @@ ideo_colors=['rgba(244, 109, 67, 0.75)',
              'rgba(254, 5, 139, 0.55)',
              'rgba(254, 239, 139, 0.75)',
              'rgba(12, 7, 106, 0.75)']#brewer colors with alpha set on 0.75
+
+# map data from the matrix onto the ideogram
+def map_data(data_matrix, row_value, ideogram_length):
+    mapped = np.zeros(data_matrix.shape)
+    for j  in range(L):
+        mapped[:, j] = ideogram_length*data_matrix[:,j]/row_value
+    return mapped
+
+mapped_data = map_data(matrix, row_sum, ideogram_length)
+print(f'Mapped data {mapped_data}')
+
+idx_sort=np.argsort(mapped_data, axis=1)
+
+def make_ribbon_ends(mapped_data, ideo_ends,  idx_sort):
+    L=mapped_data.shape[0]
+    ribbon_boundary=np.zeros((L,L+1))
+    for k in range(L):
+        start=ideo_ends[k][0]
+        ribbon_boundary[k][0]=start
+        for j in range(1,L+1):
+            J=idx_sort[k][j-1]
+            ribbon_boundary[k][j]=start+mapped_data[k][J]
+            start=ribbon_boundary[k][j]
+    return [[(ribbon_boundary[k][j],ribbon_boundary[k][j+1] ) for j in range(L)] for k in range(L)]
+
+ribbon_ends=make_ribbon_ends(mapped_data, ideo_ends,  idx_sort)
+print ('ribbon ends starting from the ideogram[2]\n', ribbon_ends[2])
