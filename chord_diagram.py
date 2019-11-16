@@ -108,3 +108,28 @@ def make_ribbon_ends(mapped_data, ideo_ends,  idx_sort):
 
 ribbon_ends=make_ribbon_ends(mapped_data, ideo_ends,  idx_sort)
 print ('ribbon ends starting from the ideogram[2]\n', ribbon_ends[2])
+
+def control_pts(angle, radius):
+    #angle is a  3-list containing angular coordinates of the control points b0, b1, b2
+    #radius is the distance from b1 to the  origin O(0,0)
+
+    b_cplx=np.array([np.exp(1j*angle[k]) for k in range(3)])
+    b_cplx[1]=radius*b_cplx[1]
+    return zip(b_cplx.real, b_cplx.imag)
+
+def ctrl_rib_chords(l, r, radius):
+    # this function returns a 2-list containing control poligons of the two quadratic Bezier
+    #curves that are opposite sides in a ribbon
+    #l (r) the list of angular variables of the ribbon arc ends defining
+    #the ribbon starting (ending) arc
+    # radius is a common parameter for both control polygons
+    if len(l)!=2 or len(r)!=2:
+        raise ValueError('the arc ends must be elements in a list of len 2')
+    return [control_pts([l[j], (l[j]+r[j])/2, r[j]], radius) for j in range(2)]
+
+ribbon_color=[L*[ideo_colors[k]] for k in range(L)]
+ribbon_color[0][4]=ideo_colors[4]
+ribbon_color[1][2]=ideo_colors[2]
+ribbon_color[2][3]=ideo_colors[3]
+ribbon_color[2][4]=ideo_colors[4]
+
