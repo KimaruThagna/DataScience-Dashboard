@@ -12,7 +12,9 @@ st.text("This page allows you to build and train a CNN for the fashion MNIST dat
 
 # train test split
 (x_train, y_train), (x_test, y_test) = fashion_mnist.load_data()
-
+# reshape dataset to have a single channel
+x_train = x_train.reshape((x_train.shape[0], 28, 28, 1))
+x_test = x_test.reshape((x_test.shape[0], 28, 28, 1))
 # boolean on whether to show images
 if st.checkbox('Show images sizes'):
     st.write(f'X Train Shape: {x_train.shape}')
@@ -21,12 +23,12 @@ if st.checkbox('Show images sizes'):
     st.write(f'Y Test Shape: {y_test.shape}')
 
 # display some random images
-classes = ['Sneaker', 'Coat', 'Dress', 'Shirt', 'Sandal']
+classes = ['T-shirt/top', 'Trouser/pants', 'Pullover shirt', 'Dress','Coat', 'Sandal', 'Shirt', 'Sneaker', 'Bag', 'Ankle boot']
 st.subheader('Inspect dataset')
 if st.checkbox('Display random image from the train set'):
     num = np.random.randint(0, x_train.shape[0])
     img = x_train[num]
-    st.image(img, caption=classes[y_train[num][0]], use_column_width=True)
+    st.image(img, caption=classes[y_train[num]], use_column_width=True)
 
 # interactive hyperparameter settings
 st.subheader('Set some hyperparameters for model tuning')
@@ -41,12 +43,12 @@ st.text('Default Kernel size is the suggested 3X3')
 model = Sequential()
 activation_1 = st.selectbox('Activation function for first layer: ', ['relu', 'tanh', 'softmax'])
 
-model.add(Conv2D(32,kernel_size=(3,3),activation=activation_1,input_shape=(32,32,3)))
+model.add(Conv2D(32,kernel_size=(3,3),activation=activation_1, padding='same', input_shape=(28,28,1)))
 model.add(MaxPool2D(pool_size=(2,2)))
 
 if st.checkbox('Add hidden Conv2D layer?'):
     activation_h = st.selectbox('Activation function for hidden layer: ', ['relu', 'tanh', 'softmax'])
-    model.add(Conv2D(64, kernel_size=(3, 3), activation=activation_h, input_shape=(32, 32, 3)))
+    model.add(Conv2D(64, kernel_size=(3, 3), activation=activation_h, padding='same', input_shape=(28,28,1)))
     model.add(MaxPool2D(pool_size=(2, 2)))
 
 if st.checkbox('Add a drop layer?'):
@@ -54,7 +56,7 @@ if st.checkbox('Add a drop layer?'):
     model.add(Dropout(drop1))
 model.add(Flatten())
 activation_2 = st.selectbox('Activation function for Dense layer: ', ['relu', 'tanh', 'softmax'])
-model.add(Dense(1024,activation=activation_2))
+model.add(Dense(512,activation=activation_2))
 activation_3 = st.selectbox('Activation function for Output layer: ', ['relu', 'tanh', 'softmax'])
 model.add(Dense(10,activation=activation_3))
 
@@ -69,8 +71,8 @@ if st.checkbox('Fit model'):
          )
 
     # Plot training & validation accuracy values
-    plt.plot(history.history['accuracy'])
-    plt.plot(history.history['val_accuracy'])
+    plt.plot(history.history['acc'])
+    plt.plot(history.history['val_acc'])
     plt.title('Model accuracy')
     plt.ylabel('Accuracy')
     plt.xlabel('Epoch')
@@ -88,7 +90,7 @@ st.subheader('Visualize Predictions')
 def plot_pred(i, predictions_array, true_label, img):
     predictions_array, true_label, img = predictions_array[i], true_label[i:i + 1], img[i]
     plt.grid(False)
-    plt.title(classes[true_label[0][0]])
+    plt.title(classes[true_label[0]])
     plt.xticks([])
     plt.yticks([])
 
