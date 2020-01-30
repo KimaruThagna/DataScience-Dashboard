@@ -1,6 +1,9 @@
 import streamlit as st
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import time
+import datetime as dt
+import pandas as pd
+from twitterscraper import query_tweets
 st.title('Sentiment Analysis')
 st.header('Senti-Tweet')
 st.text("Emotion AI. What was the twitter user feeling?")
@@ -30,3 +33,32 @@ with st.spinner('Predicting...'):
         st.write(f'Negative score: {score["neg"]}')
         st.write(f'Positive score: {score["pos"]}')
         st.write(f'Compound score: {score["compound"]}')
+
+st.subheader('Search Twitter for Query')
+
+# Get user input
+query = st.text_input('Query:', '#')
+
+# As long as the query is valid (not empty or equal to '#')...
+if query != '' and query != '#':
+    with st.spinner(f'Searching for and analyzing {query}...'):
+        # Get English tweets from the past 4 weeks
+        tweets = query_tweets(query, begindate=dt.date.today() - dt.timedelta(weeks=1), lang='en')
+        # Initialize empty dataframe
+        tweet_data = pd.DataFrame({
+            'tweet': [],
+            'sentiment': []
+        })
+
+        # Add data for each tweet
+        for tweet in tweets[10:]:
+            if tweet.text in ('', ' '): # empty tweet
+                continue
+            # Make predictions
+            sentiment = sentiment_analyzer_scores(tweet.text)
+            sentiment_socres = f'Neutral score: {sentiment["neu"]}\n' \
+                               f'Positive score: {sentiment["pos"]}\n' \
+                               f'Negative score: {sentiment["neg"]}\n' \
+
+            # Append new data
+            tweet_data = tweet_data.append({'tweet': tweet.text, 'predicted-sentiment': sentiment_socres}, ignore_index=True)
