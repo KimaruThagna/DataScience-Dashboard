@@ -46,7 +46,7 @@ tweet_data = []
 if query != '' and query != '#':
     with st.spinner(f'Searching for and analyzing {query}...'):
         # Get English tweets from the past 4 weeks
-        for tweet in  api.search(q=query, lang="en", rpp=100): # most recent 100 publicc tweets that contain the query word
+        for tweet in  api.search(q=query, lang="en", rpp=100): # most recent 100 public tweets that contain the query word
             tweet_block.join(f'**{tweet.text}') # accumulate all tweets into one major string
 
 
@@ -64,7 +64,15 @@ if query != '' and query != '#':
             tweet_data = tweet_data.append({'tweet': tweet, 'predicted-sentiment': sentiment_socres})
         print(tweet_data)
         # general sentiment
+
         general_sentiment = sentiment_analyzer_scores(tweet_block) # derive a general sentiment from all the tweets
         general_sentiment_socres = f'Neutral score: {general_sentiment["neu"]}\n' \
                            f'Positive score: {general_sentiment["pos"]}\n' \
                            f'Negative score: {general_sentiment["neg"]}\n' \
+# write to streamlit interface
+        # sample the first 1 tweets
+        st.subheader(f'Sample first 10 tweets of  {query} search')
+        for item in tweet_data:
+            st.write(f'{item["tweet"]} \t {item["predicted-sentiment"]}')
+        st.subheader(f'General Sentiment of {query}')
+        st.write(general_sentiment_socres)
