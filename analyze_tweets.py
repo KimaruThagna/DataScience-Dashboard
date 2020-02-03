@@ -1,9 +1,7 @@
 import streamlit as st
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import time
-from TwitterLytics.config.config import create_api
-import datetime as dt
-import pandas as pd
+from config import create_api
 
 st.title('Sentiment Analysis')
 st.header('Senti-Tweet')
@@ -38,7 +36,7 @@ with st.spinner('Predicting...'):
 st.subheader('Search Twitter for Query')
 
 # Get user input
-query = st.text_input('Query:', '#')
+query = st.text_input('Query:')
 api = create_api() # tweepy API
 tweet_block = ''
 tweet_data = []
@@ -46,10 +44,10 @@ tweet_data = []
 if query != '' and query != '#':
     with st.spinner(f'Searching for and analyzing {query}...'):
         # Get English tweets from the past 4 weeks
-        for tweet in  api.search(q=query, lang="en", rpp=100): # most recent 100 public tweets that contain the query word
-            tweet_block.join(f'**{tweet.text}') # accumulate all tweets into one major string
+        for tweet in  api.search(q=query, lang="en", rpp=10): # most recent 100 public tweets that contain the query word
+            tweet_block = f'{tweet_block}**{tweet.text}' # accumulate all tweets into one major string
 
-
+        print(tweet_block)
         # Add data for each tweet
         for tweet in tweet_block.split('**')[:10]:
             if tweet in ('', ' '): # empty tweet
@@ -61,8 +59,7 @@ if query != '' and query != '#':
                                f'Negative score: {sentiment["neg"]}\n' \
 
             # Append new data
-            tweet_data = tweet_data.append({'tweet': tweet, 'predicted-sentiment': sentiment_socres})
-        print(tweet_data)
+            tweet_data.append({'tweet': tweet, 'predicted-sentiment': sentiment_socres})
         # general sentiment
 
         general_sentiment = sentiment_analyzer_scores(tweet_block) # derive a general sentiment from all the tweets
@@ -73,6 +70,7 @@ if query != '' and query != '#':
         # sample the first 1 tweets
         st.subheader(f'Sample first 10 tweets of  {query} search')
         for item in tweet_data:
-            st.write(f'{item["tweet"]} \t {item["predicted-sentiment"]}')
+            st.write(f'{item["tweet"]} \n \n {item["predicted-sentiment"]}')
+            st.write('-----------------------------------------------------')
         st.subheader(f'General Sentiment of {query}')
         st.write(general_sentiment_socres)
