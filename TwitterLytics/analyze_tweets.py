@@ -1,6 +1,7 @@
 import streamlit as st
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import time
+from TwitterLytics.config.config import create_api
 import datetime as dt
 import pandas as pd
 
@@ -38,27 +39,32 @@ st.subheader('Search Twitter for Query')
 
 # Get user input
 query = st.text_input('Query:', '#')
-api = crea
+api = create_api() # tweepy API
+tweet_block = ''
+tweet_data = []
 # As long as the query is valid (not empty or equal to '#')...
 if query != '' and query != '#':
     with st.spinner(f'Searching for and analyzing {query}...'):
         # Get English tweets from the past 4 weeks
-        tweets = api.search(q="Python", lang="en", rpp=10):
-        # Initialize empty dataframe
-        tweet_data = pd.DataFrame({
-            'tweet': [],
-            'sentiment': []
-        })
+        for tweet in  api.search(q=query, lang="en", rpp=100): # most recent 100 publicc tweets that contain the query word
+            tweet_block.join(f'**{tweet.text}') # accumulate all tweets into one major string
+
 
         # Add data for each tweet
-        for tweet in tweets[:10]:
-            if tweet.text in ('', ' '): # empty tweet
+        for tweet in tweet_block.split('**')[:10]:
+            if tweet in ('', ' '): # empty tweet
                 continue
             # Make predictions
-            sentiment = sentiment_analyzer_scores(tweet.text)
+            sentiment = sentiment_analyzer_scores(tweet)
             sentiment_socres = f'Neutral score: {sentiment["neu"]}\n' \
                                f'Positive score: {sentiment["pos"]}\n' \
                                f'Negative score: {sentiment["neg"]}\n' \
 
             # Append new data
-            tweet_data = tweet_data.append({'tweet': tweet.text, 'predicted-sentiment': sentiment_socres}, ignore_index=True)
+            tweet_data = tweet_data.append({'tweet': tweet, 'predicted-sentiment': sentiment_socres})
+        print(tweet_data)
+        # general sentiment
+        general_sentiment = sentiment_analyzer_scores(tweet_block) # derive a general sentiment from all the tweets
+        general_sentiment_socres = f'Neutral score: {general_sentiment["neu"]}\n' \
+                           f'Positive score: {general_sentiment["pos"]}\n' \
+                           f'Negative score: {general_sentiment["neg"]}\n' \
