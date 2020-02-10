@@ -47,7 +47,6 @@ if query != '' and query != '#':
         for tweet in  api.search(q=query, lang="en", rpp=10): # most recent 100 public tweets that contain the query word
             tweet_block = f'{tweet_block}**{tweet.text}' # accumulate all tweets into one major string
 
-        print(tweet_block)
         # Add data for each tweet
         for tweet in tweet_block.split('**')[:10]:
             if tweet in ('', ' '): # empty tweet
