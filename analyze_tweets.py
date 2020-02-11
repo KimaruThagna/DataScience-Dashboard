@@ -1,6 +1,7 @@
 import streamlit as st
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import time
+import preprocessor as p
 from config import create_api
 
 st.title('Sentiment Analysis')
@@ -45,7 +46,7 @@ if query != '' and query != '#':
     with st.spinner(f'Searching for and analyzing {query}...'):
         # Get English tweets from the past 4 weeks
         for tweet in  api.search(q=query, lang="en", rpp=10): # most recent 100 public tweets that contain the query word
-            tweet_block = f'{tweet_block}**{tweet.text}' # accumulate all tweets into one major string
+            tweet_block = f'{tweet_block}**{p.clean(tweet.text)}' # accumulate all tweets into one major string
 
         # Add data for each tweet
         for tweet in tweet_block.split('**')[:10]:
